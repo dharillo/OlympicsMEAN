@@ -7,11 +7,19 @@ angular.module('olympics', ['ui.router'])
   $stateProvider
   .state('sports', {
     url: '/sports',
-    templateUrl: 'sports/sports-nav.html'
+    templateUrl: 'sports/sports-nav.html',
+    resolve: {
+      sportsService: function($http) {
+        return $http.get('/sports');
+      }
+    },
+    controller: function (sportsService) {
+      this.sports = sportsService.data;
+    },
+    controllerAs: 'sportsCtrl'
   })
-})
-.controller('sportsController', function($http) {
-  $http.get('/sports').then((response) => {
-    this.sports = response.data;
+  .state('sports.medals', {
+    url: '/:sportName',
+    templateUrl: 'sports/sports-medals.html'
   })
 })
