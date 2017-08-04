@@ -16,4 +16,17 @@ app.get('/sports', (request, response) => {
   });
 });
 
+app.get('/sports/:name', (request, response) => {
+  let sportName = request.params.name;
+  let sports = mongoUtil.sports();
+  sports.findOne({'name': sportName}, (err, doc) => {
+    const sport = doc;
+    if (!sport) {
+      response.status(404).json(`There is no sport stored with the name ${sportName}`);
+    } else {
+      response.json(sport);
+    }
+  });
+});
+
 app.listen(8181, () =>  console.log('Listening on 8181...'));
