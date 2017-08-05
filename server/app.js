@@ -8,6 +8,9 @@ mongoUtil.connect();
 
 app.use( express.static(__dirname + '/../client'));
 
+let bodyParser = require('body-parser');
+let jsonParser = bodyParser.json();
+
 app.get('/sports', (request, response) => {
   let sports = mongoUtil.sports();
   sports.find().toArray((err, docs) => {
@@ -26,6 +29,23 @@ app.get('/sports/:name', (request, response) => {
     } else {
       response.json(sport);
     }
+  });
+});
+
+app.post('/sports/:name/medals', jsonParser, (request, response) => {
+  let sportName = request.params.name;
+  let newMedal = request.body.medal || {};
+
+  if (!newMedal.division || !newMedal.year || !newMedal.country) {
+    response.sendStatus(201);
+  }
+
+  let sports = mongoUtil.sports();
+  sports.findOneAndUpdate(query, update, (err, res) => {
+    if (err) {
+      response.sendStatus(400);
+    }
+    response.sendStatus(201);
   });
 });
 
