@@ -34,11 +34,12 @@ angular.module('olympics', ['ui.router'])
   .state('sports.new', {
     url: '/:sportName/medal/new',
     templateUrl: 'sports/new-medal.html',
-    controller: function($stateParams, $state) {
+    controller: function($stateParams, $state, $http) {
       this.sportName = $stateParams.sportName;
       this.saveMedal = function(medal) {
-        console.log('medal', medal);
-        $state.go('sports.medals', {sportName: this.sportName});
+        $http({method: 'POST', url: `/sports/${this.sportName}/medals`, data: {medal}}).then(() => {
+          $state.go('sports.medals', {sportName: this.sportName});
+        });
       }
     },
     controllerAs: 'newMedalCtrl'
